@@ -16,7 +16,7 @@ import {
   UP_KEY,
   DOWN_KEY,
   RIGHT_KEY,
-  F2_KEY
+  F2_KEY,
 } from './keys';
 
 const isEmpty = obj => Object.keys(obj).length === 0;
@@ -55,8 +55,9 @@ export default class DataSheet extends PureComponent {
     this.isClearing = this.isClearing.bind(this);
     this.handleComponentKey = this.handleComponentKey.bind(this);
 
-    this.handleKeyboardCellMovement =
-      this.handleKeyboardCellMovement.bind(this);
+    this.handleKeyboardCellMovement = this.handleKeyboardCellMovement.bind(
+      this,
+    );
 
     this.defaultState = {
       start: {},
@@ -328,8 +329,12 @@ export default class DataSheet extends PureComponent {
     const currentCell = !noCellsSelected && this.props.data[start.i][start.j];
     const equationKeysPressed =
       [
-        187 /* equal */, 189 /* substract */, 190 /* period */, 107 /* add */,
-        109 /* decimal point */, 110,
+        187 /* equal */,
+        189 /* substract */,
+        190 /* period */,
+        107 /* add */,
+        109 /* decimal point */,
+        110,
       ].indexOf(keyCode) > -1;
 
     if (noCellsSelected || ctrlKeyPressed) {
@@ -345,13 +350,15 @@ export default class DataSheet extends PureComponent {
         if (enterKeyPressed) {
           this.handleNavigate(e, { i: e.shiftKey ? -1 : 1, j: 0 });
           e.preventDefault();
+        } else if (f2KeyPressed) {
+          this._setState({ editing: start, clear: {}, forceEdit: true });
+          e.preventDefault();
         } else if (
           numbersPressed ||
           numPadKeysPressed ||
           lettersPressed ||
           latin1Supplement ||
-          equationKeysPressed || 
-          f2KeyPressed
+          equationKeysPressed
         ) {
           // empty out cell if user starts typing without pressing enter
           this._setState({ editing: start, clear: start, forceEdit: false });
